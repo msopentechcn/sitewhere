@@ -1472,7 +1472,7 @@ public class MongoDeviceManagement extends LifecycleComponent implements IDevice
 	@Override
 	public ISite createSite(ISiteCreateRequest request) throws SiteWhereException {
 		// Use common logic so all backend implementations work the same.
-		Site site = SiteWherePersistence.siteCreateLogic(request, UUID.randomUUID().toString());
+		Site site = SiteWherePersistence.siteCreateLogic(request);
 
 		DBCollection sites = getMongoClient().getSitesCollection();
 		DBObject created = MongoSite.toDBObject(site);
@@ -1689,6 +1689,8 @@ public class MongoDeviceManagement extends LifecycleComponent implements IDevice
 
 		DBCollection groups = getMongoClient().getDeviceGroupsCollection();
 		DBObject created = MongoDeviceGroup.toDBObject(group);
+		created.put(MongoDeviceGroup.PROP_LAST_INDEX, new Long(0));
+
 		MongoPersistence.insert(groups, created);
 		return MongoDeviceGroup.fromDBObject(created);
 	}
